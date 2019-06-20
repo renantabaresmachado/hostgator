@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/breeds/name/{name}', function ($name) {
+    return "zé galinha ".$name; 
+    //return view('welcome');
 });
