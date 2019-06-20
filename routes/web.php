@@ -11,7 +11,9 @@
 |
 */
 
-Route::get('/breeds/name/{name}', function ($name) {
-    return "zé galinha ".$name; 
-    //return view('welcome');
+Route::get('/', function ($name) {
+    return view('welcome');
+});
+Route::prefix('breeds')->group(function(){
+    Route::get('/' , 'BreedController@index')->name('index');
 });
