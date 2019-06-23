@@ -56,8 +56,8 @@ class BreedResource extends Resource
             'stranger_friendly' => $this->stranger_friendly,
             'vocalisation' => $this->vocalisation,
             'links' => [
-            'bindById' =>route('breed_show', ['id' => $this->id]),
-            'bindByName' =>route('find_by_name', ['id' => $this->name])
+            'findById' =>route('breed_show', ['id' => $this->id]),
+            'findByName' =>route('find_by_name', ['id' => $this->name])
         ]
     ];
 

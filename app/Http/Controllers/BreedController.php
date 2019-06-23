@@ -20,25 +20,22 @@ class BreedController extends Controller
      */
     public function index()
     {
-        if(Breed::all()->count() > 0){
-            $breeds = Breed::all();
-            return new BreedCollection($breeds); 
-            
-        }else{
-            $client = new \GuzzleHttp\Client();
-            $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds');
-            $array = json_decode($response->getBody(), true);
-            foreach ($array as $breed) {
-                $weight = Weight::create($breed["weight"]);
-                $breed['weight_id'] = $weight->id;
-                unset($breed['weight']);
-                Breed::create($breed);
-                
+        $client = new \GuzzleHttp\Client();
+        $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds');
+        $array = json_decode($response->getBody(), true);
+            if(Breed::all()->count() < count($array)){
+                foreach ($array as $breed) {
+                    $obj = Breed::where('id' , $breed['id'])->first();
+                    if(!$obj){
+                        $weight = Weight::create($breed["weight"]);
+                        $breed['weight_id'] = $weight->id;
+                        unset($breed['weight']);
+                        Breed::create($breed);
+                    }   
+                }
             }
-            return "passou";
-        }
-
-        
+            $breeds = Breed::all();
+            return new BreedCollection($breeds);
     }
 
     /**
@@ -70,7 +67,6 @@ class BreedController extends Controller
      */
     public function show($id)
     {
-        //$breed = DB::table('breeds')->where('id' , $id)->first();
         $breed = Breed::where('id' , $id)->first();
         $breed->id = $id;
         return new BreedResource($breed); 
@@ -84,13 +80,23 @@ class BreedController extends Controller
         }else{
             $client = new \GuzzleHttp\Client();
             $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds/search?q='.$name);
-            //$breed = json_decode($response->getBody());
             $array = json_decode($response->getBody(), true);
-            $weight = Weight::create($array[0]["weight"]);
-            $array[0]['weight_id'] = $weight->id;
-            unset($array[0]['weight']);
-            $breed = Breed::create($array[0]);
-            return new BreedResource($breed);
+            if(empty($array)){
+                return response()->json(['data' => 'Resource not found'], 400);
+            }else{
+                    $breed = Breed::where('id' ,$array[0]['id'])->first();
+                if($breed){
+                    return new BreedResource($breed);
+                }else {
+                    $weight = Weight::create($array[0]["weight"]);
+                    $array[0]['weight_id'] = $weight->id;
+                    unset($array[0]['weight']);
+                    $breed = new Breed($array[0]);
+                }
+                $breed->save();
+                return new BreedResource($breed);
+            }
+            
 
         }
         
