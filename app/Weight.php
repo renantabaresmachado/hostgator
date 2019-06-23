@@ -13,7 +13,6 @@ class Weight extends Model
     public function breed()
     {
         return $this->hasOne('App\Breed');
-        
     }
 
 }

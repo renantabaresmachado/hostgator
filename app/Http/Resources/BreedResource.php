@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
+use App\Weight; 
 
 class BreedResource extends Resource
 {
@@ -13,9 +14,10 @@ class BreedResource extends Resource
      * @return array
      */
     public function toArray($request)
-    {
+    {   
+        $weight = Weight::where('id' , $this->weight_id)->first();
         return [
-            'weigth' => new WeigthResource($this->weigth),
+            'weigth' => new WeigthResource($weight),
             'id' => $this->id,
             'name' => $this->name,
             'temperament' => $this->temperament,
@@ -54,7 +56,8 @@ class BreedResource extends Resource
             'stranger_friendly' => $this->stranger_friendly,
             'vocalisation' => $this->vocalisation,
             'links' => [
-            'url' => route('show_usuario', ['id' => $this->id])
+            'bindById' =>route('breed_show', ['id' => $this->id]),
+            'bindByName' =>route('find_by_name', ['id' => $this->name])
         ]
     ];
 

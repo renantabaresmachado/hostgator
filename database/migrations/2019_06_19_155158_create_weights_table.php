@@ -17,6 +17,7 @@ class CreateWeightsTable extends Migration
             $table->increments('id');
             $table->string('imperial');
             $table->string('metric');
+            $table->timestamps();
         });
     }
 

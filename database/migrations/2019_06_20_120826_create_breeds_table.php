@@ -18,24 +18,23 @@ class CreateBreedsTable extends Migration
             $table->string('name');
             $table->string('temperament');
             $table->string('life_span');
-            $table->string('alt_names');    
-            $table->string('wikipedia_url');
-            $table->string('cfa_url');//json response
-            $table->string('vetstreet_url');//json response
-            $table->string('vcahospitals_url');//json response
+            $table->string('alt_names')->nullable();    
+            $table->string('wikipedia_url')->nullable();
+            $table->string('cfa_url')->nullable();//json response
+            $table->string('vetstreet_url')->nullable();//json response
+            $table->string('vcahospitals_url')->nullable();//json response
             $table->string('country_codes');//json response
             $table->longText('description');//json response see length
             $table->integer('indoor');//json response
-            $table->integer('lap');//json response
-            $table->integer('suppressed_tail');//json response
+            $table->integer('lap')->nullable();//json response
             $table->string('origin');
-            $table->string('weight_imperial');
+            $table->string('weight_imperial')->nullable();
             $table->integer('experimental');
             $table->integer('hairless');
             $table->integer('natural');
             $table->integer('rare');
             $table->integer('rex');
-            $table->integer('suppress_tail');
+            $table->integer('suppressed_tail');
             $table->integer('short_legs');
             $table->integer('hypoallergenic');
             $table->integer('adaptability');    
@@ -51,6 +50,7 @@ class CreateBreedsTable extends Migration
             $table->integer('social_needs');
             $table->integer('stranger_friendly');
             $table->integer('vocalisation');
+            $table->timestamps();
             $table->integer('weight_id')->unsigned();
             $table->foreign('weight_id')->references('id')->on('weights');
         });
