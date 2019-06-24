@@ -57,7 +57,7 @@ class BreedResource extends Resource
             'vocalisation' => $this->vocalisation,
             'links' => [
             'findById' =>route('breed_show', ['id' => $this->id]),
-            'findByName' =>route('find_by_name', ['id' => $this->name])
+            'findByName' =>route('find_by_name', ['name' => $this->name])
         ]
     ];
 

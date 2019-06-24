@@ -8,6 +8,8 @@ use App\Weight;
 use App\Http\Resources\BreedCollection;
 use App\Http\Resources\BreedResource;
 use Illuminate\Support\Facades\DB;
+use App\Services\PayUService\Exception;
+
 
 
 
@@ -20,22 +22,7 @@ class BreedController extends Controller
      */
     public function index()
     {
-        $client = new \GuzzleHttp\Client();
-        $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds');
-        $array = json_decode($response->getBody(), true);
-            if(Breed::all()->count() < count($array)){
-                foreach ($array as $breed) {
-                    $obj = Breed::where('id' , $breed['id'])->first();
-                    if(!$obj){
-                        $weight = Weight::create($breed["weight"]);
-                        $breed['weight_id'] = $weight->id;
-                        unset($breed['weight']);
-                        Breed::create($breed);
-                    }   
-                }
-            }
-            $breeds = Breed::all();
-            return new BreedCollection($breeds);
+        
     }
 
     /**
@@ -54,9 +41,16 @@ class BreedController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    private function store ($array)
     {
-        //
+        foreach ($array as $breed) {
+            if(isset($breed["weight"])){
+                $weight = Weight::create($breed["weight"]);
+                $breed['weight_id'] = $weight->id;
+            }
+            unset($breed['weight']);
+            Breed::create($breed);
+        }
     }
 
     /**
@@ -68,39 +62,55 @@ class BreedController extends Controller
     public function show($id)
     {
         $breed = Breed::where('id' , $id)->first();
-        $breed->id = $id;
-        return new BreedResource($breed); 
+        return new BreedResource($breed);
     }
-
-    public function findbyname($name)
-    {
-        $breed = Breed::where('name' , $name)->first();
-        if($breed){
-            return new BreedResource($breed);
+    private function findByNameOrId($request){
+        if($request->name){
+            $return = Breed::where('name', 'like', '%' . $request->name . '%')->get();
+        }elseif ($request->id) {
+            $return = Breed::where('id',  $request->id)->get();
         }else{
-            $client = new \GuzzleHttp\Client();
-            $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds/search?q='.$name);
-            $array = json_decode($response->getBody(), true);
-            if(empty($array)){
-                return response()->json(['data' => 'Resource not found'], 400);
-            }else{
-                    $breed = Breed::where('id' ,$array[0]['id'])->first();
-                if($breed){
-                    return new BreedResource($breed);
-                }else {
-                    $weight = Weight::create($array[0]["weight"]);
-                    $array[0]['weight_id'] = $weight->id;
-                    unset($array[0]['weight']);
-                    $breed = new Breed($array[0]);
-                }
-                $breed->save();
-                return new BreedResource($breed);
-            }
-            
-
+            $return = false; 
         }
-        
+        return $return;
     }
+
+    public function find(Request $request)
+{
+    try {
+        $breeds = $this->findByNameOrId($request);
+        if($breeds == false){
+            return response()->json([], 400);
+        }
+        if($breeds->isNotEmpty()) {
+        return new BreedCollection($breeds);
+        } else {
+            $client = new \GuzzleHttp\Client();
+            if(Breed::all()->isEmpty()){
+                $response= $client->request('GET' , 'https://api.thecatapi.com/v1/breeds');
+                $array = json_decode($response->getBody(), true);
+                $this->store($array);
+                $breeds = $this->findByNameOrId($request);
+                return new BreedCollection($breeds);
+            }else{
+                $values = array_values($request->all());
+                $url = 'https://api.thecatapi.com/v1/breeds/search?q='.implode($values, ",");
+                $response= $client->request('GET' , $url);
+                $array = json_decode($response->getBody(), true);
+                if(empty($array)){
+                    return response()->json([], 404);
+                }else{
+                    $this->store($array);
+                    return new BreedCollection($array);
+                } 
+                    
+                }
+            }
+        }catch(\Exception $e){
+            return response()->json([], 403);
+        } 
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -136,3 +146,5 @@ class BreedController extends Controller
         //
     }
 }
+
+

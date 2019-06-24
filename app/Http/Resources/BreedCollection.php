@@ -19,7 +19,7 @@ class BreedCollection extends ResourceCollection
              $this->collection->map(function ($order) use ($request) {
                return (new BreedResource($order))->toArray($request);
                  }),
-            'link' => route('breed_index')
+            'link' => 'breed_links'
              ];
         
     }

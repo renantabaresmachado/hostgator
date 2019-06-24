@@ -51,7 +51,7 @@ class CreateBreedsTable extends Migration
             $table->integer('stranger_friendly');
             $table->integer('vocalisation');
             $table->timestamps();
-            $table->integer('weight_id')->unsigned();
+            $table->integer('weight_id')->unsigned()->nullable();
             $table->foreign('weight_id')->references('id')->on('weights');
         });
     }
