@@ -14,7 +14,7 @@
 - Access the root directory of the application.
 - To update dependencies, run the command in terminal : composer update.
 - Create new database with name "hostgator".
-- edit the .env file in the root directory of the application in the lines:
+- Edit the .env file in the root directory of the application in the lines:
 -{
 -12.DB_USERNAME="your user".
 -13.DB_PASSWORD="your pass".
@@ -27,9 +27,9 @@
 
 -to run Unit Tests: run the command in terminal: vendor/bin/phpunit.
 - if you run the application with command: php artisan serve and your port 8000 is free
-- For find a Breed of cat by name = sib **[URL](http://localhost:8000/breeds/breeds?name=sib)**
-- For find a Breed of cat by name = a **[URL](http://localhost:8000/breeds/breeds?name=a)**
-- For find  potato = yes **[URL](http://localhost:8000/breeds/breeds?potato=yes)**
+- For find a Breed of cat by name = sib **[URL](http://localhost:8000/breeds?name=sib)**
+- For find a Breed of cat by name = a **[URL](http://localhost:8000/breeds?name=a)**
+- For find  potato = yes **[URL](http://localhost:8000/breeds?potato=yes)**
 
 
 <p>Renan Tabares Machado</p>
