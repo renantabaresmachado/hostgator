@@ -15,12 +15,12 @@
 - To update dependencies, run the command in terminal : composer update.
 - Create new database with name "hostgator".
 - Edit the .env file in the root directory of the application in the lines:
--{
--12.DB_USERNAME="your user".
--13.DB_PASSWORD="your pass".
--}
+- }
+- 12.DB_USERNAME="your user".
+- 13.DB_PASSWORD="your pass".
+- }
 - To create the database struture, run the command in terminal: php artisan migrate.
-- To run application, run a command: php artisan serve or place the project on an apache server  .
+- To run application, run a command: php artisan serve or place the project on an apache server .
 
 
 ## Steps to test Aplication

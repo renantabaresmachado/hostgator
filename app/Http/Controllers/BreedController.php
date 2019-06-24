@@ -62,7 +62,11 @@ class BreedController extends Controller
     public function show($id)
     {
         $breed = Breed::where('id' , $id)->first();
-        return new BreedResource($breed);
+        if($breed){
+            return new BreedResource($breed);
+        }else{
+            return response()->json([], 404);
+        }
     }
     private function findByNameOrId($request){
         if($request->name){
